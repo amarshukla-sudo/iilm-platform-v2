@@ -18,6 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../frontend")));
+app.use(express.static(path.join(__dirname, "../../frontend")));
 
 // ── Supabase client (service role for backend) ───────────────
 const supabase = createClient(
@@ -470,8 +471,12 @@ app.get("/api/admin/analytics/daily", authenticate, adminOnly, async (req, res) 
 });
 
 // ── Serve frontend ────────────────────────────────────────────
-app.get("*", (req, res) => res.sendFile(path.join(__dirname, "../frontend/index.html")));
-
+app.get("*", (req, res) => {
+  const p1 = path.join(__dirname, "../frontend/index.html");
+  const p2 = path.join(__dirname, "./frontend/index.html");
+  const fs2 = require("fs");
+  res.sendFile(fs2.existsSync(p1) ? p1 : p2);
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`IILM AI Platform v2 → http://localhost:${PORT}`);
